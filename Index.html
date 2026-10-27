@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101111">
+<title>Home</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101111;
+  --panel: #181a19;
+  --hover: #222522;
+  --line: #2a2d2b;
+  --text: #f1f2ee;
+  --muted: #929892;
+  --accent: #d5f277;
+  --danger: #ff8f86;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+.page {
+  width: min(100% - 36px, 560px);
+  margin: auto;
+  padding: max(28px, env(safe-area-inset-top)) 0
+           max(28px, env(safe-area-inset-bottom));
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 34px;
+}
+
+.wordmark {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.status {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.greeting {
+  margin: 0 0 5px;
+  font-size: clamp(28px, 7vw, 38px);
+  line-height: 1.1;
+  letter-spacing: -0.065em;
+  font-weight: 650;
+}
+
+.subheading {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Search */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  height: 54px;
+  margin: 25px 0 31px;
+  padding: 0 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+}
+
+.search svg {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  background: transparent;
+}
+
+.search input::placeholder {
+  color: #777e78;
+}
+
+.search button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+}
+
+/* Quick access */
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.section-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sites {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.site {
+  position: relative;
+  min-width: 0;
+}
+
+.site-link,
+.add-site {
+  display: flex;
+  min-height: 105px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.site-link:active,
+.add-site:active {
+  background: var(--hover);
+}
+
+/* Website logo */
+
+.site-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid #363b36;
+  border-radius: 11px;
+  background: #222622;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.site-logo {
+  display: block;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.site-mark.has-logo {
+  background: #fff;
+  border-color: #fff;
+}
+
+.site-name {
+  width: 100%;
+  overflow: hidden;
+  color: #d8dbd5;
+  font-size: 12px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Remove button */
+
+.remove {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  z-index: 2;
+  display: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #292c29;
+  color: var(--text);
+  font-size: 17px;
+}
+
+.sites.editing .remove {
+  display: grid;
+}
+
+/* Add button */
+
+.add-site {
+  border-style: dashed;
+  border-color: #454a45;
+  background: transparent;
+  color: var(--muted);
+}
+
+.add-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #3a3e39;
+  border-radius: 11px;
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.add-label {
+  font-size: 12px;
+}
+
+.tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.text-button {
+  padding: 7px 0 7px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 39px;
+  padding-top: 16px;
+  border-top: 1px solid #242725;
+  color: #737a73;
+  font-size: 11px;
+}
+
+/* Add website dialog */
+
+dialog {
+  width: min(calc(100% - 32px), 390px);
+  padding: 0;
+  border: 1px solid #353a35;
+  border-radius: 18px;
+  background: #181a19;
+  color: var(--text);
+}
+
+dialog::backdrop {
+  background: #0009;
+  backdrop-filter: blur(3px);
+}
+
+.dialog-inner {
+  padding: 22px;
+}
+
+.dialog-title {
+  margin: 0 0 5px;
+  font-size: 19px;
+  letter-spacing: -0.04em;
+}
+
+.dialog-copy {
+  margin: 0 0 19px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field {
+  display: block;
+  margin: 13px 0 5px;
+  color: #c7ccc5;
+  font-size: 12px;
+}
+
+.form-input {
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid #353a35;
+  border-radius: 10px;
+  outline: 0;
+  background: #111312;
+  color: var(--text);
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+}
+
+.error {
+  min-height: 18px;
+  margin-top: 8px;
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.action {
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid #3a3e39;
+  border-radius: 10px;
+  background: transparent;
+}
+
+.action.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #171a11;
+  font-weight: 700;
+}
+
+@media (max-width: 360px) {
+  .page {
+    width: calc(100% - 28px);
+  }
+
+  .sites {
+    gap: 7px;
+  }
+
+  .site-link,
+  .add-site {
+    min-height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+
+  <header>
+    <div class="wordmark">home<span class="accent">.</span></div>
+    <div class="status" id="dateLabel">Your space</div>
+  </header>
+
+  <section>
+    <h1 class="greeting">Where to?</h1>
+    <p class="subheading">A little less scrolling. A little more browsing.</p>
+  </section>
+
+  <form class="search" id="searchForm" role="search">
+    <svg width="19" height="19" viewBox="0 0 24 24"
+         fill="none" aria-hidden="true">
+      <circle cx="10.8" cy="10.8" r="6.8"
+              stroke="currentColor" stroke-width="1.7"/>
+      <path d="m16 16 4.2 4.2"
+            stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round"/>
+    </svg>
+
+    <input
+      id="searchInput"
+      aria-label="Search the web or enter an address"
+      placeholder="Search or enter address"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+    >
+
+    <button type="submit" aria-label="Search">
+      <svg width="18" height="18" viewBox="0 0 24 24"
+           fill="none" aria-hidden="true">
+        <path d="M5 12h13M13 6l6 6-6 6"
+              stroke="currentColor" stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </form>
+
+  <section>
+    <div class="section-head">
+      <h2 class="section-title">Quick access</h2>
+      <span class="section-note" id="siteCount">Your websites</span>
+    </div>
+
+    <div class="sites" id="sites" aria-live="polite"></div>
+
+    <div class="tools">
+      <button class="text-button" id="editButton" type="button">
+        Edit shortcuts
+      </button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>Made for getting there.</span>
+    <span id="footerCount">0 shortcuts</span>
+  </footer>
+
+</main>
+
+<dialog id="siteDialog">
+  <form class="dialog-inner" id="siteForm">
+    <h2 class="dialog-title">Add a website</h2>
+    <p class="dialog-copy">Keep the places you visit close.</p>
+
+    <label class="field" for="siteName">Name</label>
+    <input
+      class="form-input"
+      id="siteName"
+      maxlength="24"
+      placeholder="YouTube"
+      autocomplete="off"
+      required
+    >
+
+    <label class="field" for="siteUrl">Website address</label>
+    <input
+      class="form-input"
+      id="siteUrl"
+      placeholder="youtube.com"
+      inputmode="url"
+      autocapitalize="off"
+      autocomplete="url"
+      spellcheck="false"
+      required
+    >
+
+    <div class="error" id="formError" role="alert"></div>
+
+    <div class="actions">
+      <button class="action" id="cancelButton" type="button">
+        Cancel
+      </button>
+      <button class="action primary" type="submit">
+        Save website
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  const defaults = [
+    { name: "YouTube", url: "https://youtube.com" },
+    { name: "Wikipedia", url: "https://wikipedia.org" },
+    { name: "Reddit", url: "https://reddit.com" },
+    { name: "GitHub", url: "https://github.com" },
+    { name: "Gmail", url: "https://mail.google.com" },
+    { name: "ChatGPT", url: "https://chatgpt.com" },
+    { name: "Instagram", url: "https://instagram.com" }
+  ];
+
+  const STORAGE_KEY = "minimal-home-shortcuts-v1";
+
+  const sitesElement = document.getElementById("sites");
+  const dialog = document.getElementById("siteDialog");
+  const form = document.getElementById("siteForm");
+  const nameInput = document.getElementById("siteName");
+  const urlInput = document.getElementById("siteUrl");
+  const errorElement = document.getElementById("formError");
+  const editButton = document.getElementById("editButton");
+
+  let editing = false;
+  let sites = loadSites();
+
+  function loadSites() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+
+      if (stored !== null) {
+        const parsed = JSON.parse(stored);
+
+        if (Array.isArray(parsed)) {
+          return parsed.filter(site =>
+            site &&
+            typeof site.name === "string" &&
+            typeof site.url === "string"
+          );
+        }
+      }
+    } catch (error) {
+      console.warn("Could not load saved websites.", error);
+    }
+
+    return defaults.map(site => ({ ...site }));
+  }
+
+  function saveSites() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+    } catch (error) {
+      console.warn("Could not save websites.", error);
+    }
+  }
+
+  function normalizeUrl(value) {
+    let input = value.trim();
+
+    if (!/^https?:\/\//i.test(input)) {
+      input = "https://" + input;
+    }
+
+    const parsed = new URL(input);
+
+    if (
+      !["http:", "https:"].includes(parsed.protocol) ||
+      !parsed.hostname.includes(".")
+    ) {
+      throw new Error("Enter a valid website, like example.com.");
+    }
+
+    return parsed.href;
+  }
+
+  function getInitials(site) {
+    try {
+      const hostname = new URL(site.url).hostname
+        .replace(/^www\./i, "");
+
+      return hostname.split(".")[0]
+        .replace(/[^a-z0-9]/gi, "")
+        .slice(0, 2)
+        .toUpperCase() || site.name.slice(0, 2).toUpperCase();
+    } catch {
+      return site.name.slice(0, 2).toUpperCase();
+    }
+  }
+
+  /*
+   * Logo loading:
+   * Try the website's own favicon first.
+   * If unavailable, try Google's favicon service.
+   * If both fail, display the website's initials.
+   */
+  function loadLogo(site, mark) {
+    let hostname;
+
+    try {
+      hostname = new URL(site.url).hostname;
+    } catch {
+      return;
+    }
+
+    const sources = [
+      "https://" + hostname + "/favicon.ico",
+      "https://www.google.com/s2/favicons?domain=" +
+        encodeURIComponent(hostname) + "&sz=64"
+    ];
+
+    let sourceIndex = 0;
+    const logo = document.createElement("img");
+
+    logo.className = "site-logo";
+    logo.alt = "";
+    logo.loading = "lazy";
+    logo.referrerPolicy = "no-referrer";
+
+    function tryNextSource() {
+      if (sourceIndex >= sources.length) {
+        logo.remove();
+        mark.classList.remove("has-logo");
+        mark.textContent = getInitials(site);
+        return;
+      }
+
+      logo.src = sources[sourceIndex++];
+    }
+
+    logo.addEventListener("load", () => {
+      if (logo.naturalWidth > 0) {
+        mark.textContent = "";
+        mark.classList.add("has-logo");
+        mark.appendChild(logo);
+      } else {
+        tryNextSource();
+      }
+    });
+
+    logo.addEventListener("error", tryNextSource);
+
+    mark.textContent = getInitials(site);
+    tryNextSource();
+  }
+
+  function render() {
+    sitesElement.replaceChildren();
+    sitesElement.classList.toggle("editing", editing);
+
+    sites.forEach((site, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "site";
+
+      const removeButton = document.createElement("button");
+      removeButton.className = "remove";
+      removeButton.type = "button";
+      removeButton.textContent = "×";
+      removeButton.setAttribute(
+        "aria-label",
+        "Remove " + site.name
+      );
+
+      removeButton.addEventListener("click", () => {
+        sites.splice(index, 1);
+        saveSites();
+        render();
+      });
+
+      const link = document.createElement("a");
+      link.className = "site-link";
+      link.href = site.url;
+      link.setAttribute("aria-label", "Open " + site.name);
+
+      const mark = document.createElement("span");
+      mark.className = "site-mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = getInitials(site);
+
+      const name = document.createElement("span");
+      name.className = "site-name";
+      name.textContent = site.name;
+
+      loadLogo(site, mark);
+
+      link.append(mark, name);
+      wrapper.append(removeButton, link);
+      sitesElement.appendChild(wrapper);
+    });
+
+    const addButton = document.createElement("button");
+    addButton.className = "add-site";
+    addButton.type = "button";
+    addButton.innerHTML = `
+      <span class="add-mark" aria-hidden="true">+</span>
+      <span class="add-label">Add website</span>
+    `;
+
+    addButton.addEventListener("click", openDialog);
+    sitesElement.appendChild(addButton);
+
+    document.getElementById("siteCount").textContent =
+      sites.length + (sites.length === 1 ? " saved site" : " saved sites");
+
+    document.getElementById("footerCount").textContent =
+      sites.length + (sites.length === 1 ? " shortcut" : " shortcuts");
+
+    editButton.textContent = editing
+      ? "Done editing"
+      : "Edit shortcuts";
+  }
+
+  function openDialog() {
+    form.reset();
+    errorElement.textContent = "";
+    dialog.showModal();
+
+    setTimeout(() => nameInput.focus(), 50);
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+
+    try {
+      const name = nameInput.value.trim();
+      const url = normalizeUrl(urlInput.value);
+
+      if (!name) {
+        throw new Error("Give this shortcut a name.");
+      }
+
+      const newHostname = new URL(url).hostname.toLowerCase();
+
+      const duplicate = sites.some(site => {
+        try {
+          return new URL(site.url).hostname.toLowerCase() === newHostname;
+        } catch {
+          return false;
+        }
+      });
+
+      if (duplicate) {
+        throw new Error("That website is already in your shortcuts.");
+      }
+
+      sites.push({ name, url });
+
+      saveSites();
+      render();
+      dialog.close();
+    } catch (error) {
+      errorElement.textContent =
+        error.message || "Couldn't save that website.";
+    }
+  });
+
+  document.getElementById("cancelButton").addEventListener(
+    "click",
+    () => dialog.close()
+  );
+
+  editButton.addEventListener("click", () => {
+    editing = !editing;
+    render();
+  });
+
+  document.getElementById("searchForm").addEventListener(
+    "submit",
+    event => {
+      event.preventDefault();
+
+      const query = document
+        .getElementById("searchInput")
+        .value.trim();
+
+      if (!query) return;
+
+      const looksLikeAddress =
+        /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}([/:?#].*)?$/i
+        .test(query);
+
+      const destination = looksLikeAddress
+        ? (/^https?:\/\//i.test(query)
+            ? query
+            : "https://" + query)
+        : "https://www.google.com/search?q=" +
+            encodeURIComponent(query);
+
+      window.location.href = destination;
+    }
+  );
+
+  try {
+    document.getElementById("dateLabel").textContent =
+      new Intl.DateTimeFormat(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric"
+      }).format(new Date());
+  } catch {}
+
+  render();
+})();
+</script>
+</body>
+  </html>
